@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F6F2E9">
+<title>TORIYA NOVA — Business Architecture Lab</title>
+<script src="https://telegram.org/js/telegram-web-app.js?63"></script>
+<style>
+:root{
+  --bg:#F4F0E8;--paper:#FBF9F4;--paper2:#EFE9DE;--ink:#10212B;--ink2:#193443;
+  --text:#26343B;--muted:#738087;--gold:#B48959;--gold2:#D8C1A0;--line:#D8D4CB;
+  --rose:#7C4F59;--ok:#416653;--warn:#9A6D35;--danger:#8A4D43;
+  --shadow:0 22px 70px -52px rgba(16,33,43,.7);
+  --display:Georgia,'Times New Roman',serif;--sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,Arial,sans-serif;
+  --mono:ui-monospace,'SFMono-Regular',Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}html{background:var(--bg)}html,body{margin:0;min-height:100%;color:var(--text)}
+body{font-family:var(--sans);line-height:1.48;background:
+  radial-gradient(circle at 12% -10%,rgba(180,137,89,.12),transparent 30%),
+  radial-gradient(circle at 105% 22%,rgba(25,52,67,.08),transparent 28%),var(--bg)}
+button,a{font:inherit}.app{width:min(100%,640px);margin:0 auto;min-height:100dvh;padding:0 16px calc(34px + env(safe-area-inset-bottom))}
+.screen{display:none;animation:rise .34s cubic-bezier(.2,.7,.2,1)}.screen.active{display:block}@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.topbar{height:64px;display:flex;align-items:center;justify-content:space-between;padding:env(safe-area-inset-top) 2px 0}.brand{display:flex;align-items:center;gap:10px;font:700 10px/1 var(--mono);letter-spacing:.16em;color:var(--ink)}
+.brandmark{width:27px;height:27px;border-radius:9px;border:1px solid rgba(16,33,43,.16);display:grid;place-items:center;background:rgba(251,249,244,.72);font-family:var(--display);font-size:13px;color:var(--ink)}
+.demo{font:700 9px/1 var(--mono);letter-spacing:.12em;color:var(--warn);border:1px solid rgba(154,109,53,.28);padding:6px 8px;border-radius:999px;display:none;background:rgba(255,255,255,.35)}.demo.show{display:inline-flex}
+.card{position:relative;background:rgba(251,249,244,.92);border:1px solid rgba(16,33,43,.11);border-radius:24px;padding:22px;margin:12px 0;box-shadow:var(--shadow);backdrop-filter:blur(14px)}
+.card.dark{background:linear-gradient(145deg,#10212B 0%,#172F3B 100%);border-color:rgba(255,255,255,.08);color:#F5F0E7;overflow:hidden}
+.card.dark:before{content:"";position:absolute;width:280px;height:280px;border-radius:50%;border:1px solid rgba(216,193,160,.16);right:-145px;top:-150px}.card.dark:after{content:"";position:absolute;width:130px;height:130px;border-radius:50%;background:rgba(180,137,89,.08);right:-20px;bottom:-80px;filter:blur(2px)}
+.card.dark>*{position:relative;z-index:1}.card.dark h1,.card.dark h2,.card.dark h3{color:#fff}.card.dark .muted{color:#C2CDD1}.card.dark .eyebrow{color:#D8C1A0}
+.eyebrow{font:800 9.5px/1.3 var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+h1,h2,h3{font-family:var(--display);color:var(--ink);font-weight:500;margin:0;line-height:1.08}h1{font-size:clamp(34px,9vw,49px);letter-spacing:-.035em}h2{font-size:30px;letter-spacing:-.025em}h3{font-size:21px;letter-spacing:-.015em}.lead{font-size:17px;line-height:1.55;color:var(--text);margin:17px 0}.muted{color:var(--muted)}
+.hero{padding-top:5px}.hero .card{padding:30px 24px}.hero-number{font:700 10px/1 var(--mono);color:#D8C1A0;letter-spacing:.16em;margin-bottom:36px}.hero h1 em{font-style:normal;color:#D8C1A0}.hero-copy{font-size:17px;line-height:1.6;color:#D4DDE0;margin:18px 0 23px;max-width:520px}.hero-proof{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:22px 0}.hero-proof div{border-top:1px solid rgba(255,255,255,.17);padding-top:11px}.hero-proof b{display:block;color:#fff;font:500 20px/1.2 var(--display)}.hero-proof span{display:block;color:#AEBAC0;font-size:10px;margin-top:4px;text-transform:uppercase;letter-spacing:.07em}
+.promise{display:grid;gap:10px;margin:13px 0}.promise-row{display:flex;gap:12px;align-items:flex-start;border-bottom:1px solid rgba(16,33,43,.08);padding:4px 0 13px}.promise-row:last-child{border-bottom:0;padding-bottom:2px}.promise-num{font:700 10px/1 var(--mono);color:var(--gold);padding-top:4px;min-width:24px}.promise-row b{display:block;color:var(--ink);margin-bottom:3px}.promise-row span{font-size:13.5px;color:var(--muted)}
+.btn{border:1px solid var(--ink);background:var(--ink);color:#fff;border-radius:15px;min-height:54px;padding:13px 18px;font-weight:750;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:transform .15s ease,opacity .15s ease,background .15s ease}.btn.block{width:100%}.btn.ghost{background:transparent;color:var(--ink)}.card.dark .btn{background:#F4F0E8;color:var(--ink);border-color:#F4F0E8}.btn:active{transform:scale(.985)}.btn[disabled]{opacity:.42;pointer-events:none}.btn .arrow{font-weight:400;opacity:.75}
+.note{font-size:12.5px;color:var(--muted);margin-top:11px}.micro{font:700 10px/1.4 var(--mono);color:var(--muted);letter-spacing:.05em}.tinyline{height:1px;background:rgba(16,33,43,.1);margin:18px 0}
+.progress-wrap{position:sticky;top:0;z-index:10;background:linear-gradient(var(--bg) 70%,rgba(244,240,232,0));padding:9px 0 16px}.progress-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;font:700 10px/1 var(--mono);letter-spacing:.06em;color:var(--muted)}.progress{height:5px;border-radius:99px;background:rgba(16,33,43,.08);overflow:hidden}.progress i{display:block;height:100%;background:linear-gradient(90deg,var(--ink),var(--gold));transition:width .25s ease}
+.q-card{padding:24px 21px}.q-index{font:500 38px/1 var(--display);color:rgba(16,33,43,.18);margin-bottom:18px}.q-title{font-family:var(--display);font-size:28px;line-height:1.14;color:var(--ink);margin:8px 0 11px;letter-spacing:-.02em}.q-help{font-size:14px;color:var(--muted);margin-bottom:20px;line-height:1.48}.opts{display:grid;gap:9px}.opt{width:100%;text-align:left;border:1px solid rgba(16,33,43,.12);background:rgba(255,255,255,.42);border-radius:15px;padding:14px 14px 14px 45px;min-height:60px;position:relative;color:var(--text);font-size:15px;line-height:1.35;cursor:pointer;transition:.15s ease}.opt:before{content:"";position:absolute;left:15px;top:17px;width:17px;height:17px;border:1.5px solid #B8B6B0;border-radius:50%}.opt.sel{border-color:rgba(16,33,43,.6);background:#F0ECE3;transform:translateY(-1px)}.opt.sel:before{background:var(--ink);border-color:var(--ink);box-shadow:inset 0 0 0 4px #F0ECE3}
+.navrow{display:flex;gap:9px;margin:14px 0}.navrow .btn{flex:1}.navrow .btn.ghost{flex:0 0 58px;padding:0}
+.loader{min-height:78dvh;display:grid;place-items:center;text-align:center;padding:20px}.scan{width:76px;height:76px;border-radius:24px;position:relative;margin:0 auto 24px;background:var(--ink);box-shadow:0 18px 55px -30px rgba(16,33,43,.7)}.scan:before{content:"TN";position:absolute;inset:0;display:grid;place-items:center;font-family:var(--display);font-size:21px;color:#F4F0E8}.scan:after{content:"";position:absolute;left:15px;right:15px;height:1px;background:var(--gold2);animation:scan 1.5s infinite ease-in-out}@keyframes scan{0%,100%{top:18px;opacity:.45}50%{top:57px;opacity:1}}
+.result-hero{padding:27px 23px}.score-line{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-top:24px}.overall{font-family:var(--display);font-size:62px;line-height:.82;color:#fff;letter-spacing:-.055em;white-space:nowrap}.overall small{font:700 9px/1.2 var(--mono);color:#AEBAC0;display:block;margin-top:10px;letter-spacing:.11em;text-transform:uppercase}.result-hero h2{font-size:31px}.result-hero .result-sub{font-size:14.5px;line-height:1.5;margin:10px 0 0;color:#C7D1D5}
+.metric-grid{display:grid;gap:14px;margin-top:6px}.metric{margin:0}.metric-head{display:flex;justify-content:space-between;gap:12px;margin-bottom:7px;font-size:13px}.metric-head b{font-weight:700;color:var(--ink)}.metric-head span{font:700 11px/1 var(--mono);color:var(--muted)}.mbar{height:6px;background:rgba(16,33,43,.08);border-radius:99px;overflow:hidden}.mbar i{display:block;height:100%;border-radius:99px;background:var(--ink2)}.mbar.low i{background:var(--danger)}.mbar.mid i{background:var(--gold)}.mbar.high i{background:var(--ok)}
+.focus-card{background:#EEE6DA;border-color:rgba(180,137,89,.25)}.focus-pill{display:inline-flex;align-items:center;gap:7px;background:rgba(180,137,89,.13);border:1px solid rgba(180,137,89,.2);border-radius:999px;padding:7px 9px;font:700 9px/1 var(--mono);letter-spacing:.1em;color:#7E5D38;margin-bottom:12px}.alert{border-left:2px solid var(--gold);padding:2px 0 2px 14px;margin:15px 0;font-size:14px;line-height:1.5}.alert b{color:var(--ink)}.good{border-left-color:var(--ok)}
+.insight-list{display:grid;gap:9px;margin-top:14px}.insight{border:1px solid rgba(16,33,43,.1);border-radius:16px;background:rgba(255,255,255,.35);padding:15px}.insight .num{font:700 9px/1 var(--mono);color:var(--gold);letter-spacing:.13em;margin-bottom:8px}.insight b{display:block;color:var(--ink);margin-bottom:5px}.insight p{font-size:13.5px;margin:0;color:var(--muted);line-height:1.48}
+.ai-card{overflow:hidden}.ai-compare{display:grid;grid-template-columns:1fr 24px 1fr;gap:6px;align-items:stretch;margin-top:15px}.ai-side{border:1px solid rgba(16,33,43,.1);border-radius:16px;padding:14px;background:rgba(255,255,255,.35)}.ai-side small{display:block;font:700 9px/1 var(--mono);letter-spacing:.1em;color:var(--muted);margin-bottom:7px}.ai-side b{font-size:13.5px;color:var(--ink)}.ai-arrow{display:grid;place-items:center;color:var(--gold)}
+.offer{padding:28px 23px}.offer .offer-intro{font-size:15px;line-height:1.55;color:#C9D3D6;margin:14px 0}.offer-list{display:grid;gap:1px;margin:17px 0;border-top:1px solid rgba(255,255,255,.13)}.offer-item{display:grid;grid-template-columns:28px 1fr;gap:8px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.13);font-size:14px;line-height:1.4}.offer-item span:first-child{font:700 9px/1 var(--mono);color:#D8C1A0;padding-top:4px}.offer-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:18px 0}.offer-meta div{border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:12px 8px;text-align:center;background:rgba(255,255,255,.03)}.offer-meta b{display:block;color:#fff;font-family:var(--display);font-size:20px;font-weight:500}.offer-meta span{font-size:9px;color:#AEBAC0;font-family:var(--mono);text-transform:uppercase;letter-spacing:.08em}.price-row{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:20px 0 16px}.price{font-family:var(--display);font-size:44px;line-height:1;color:#fff;letter-spacing:-.04em}.price-note{font-size:11px;color:#AEBAC0;text-align:right;max-width:150px}.lead-status{color:#C9D3D6;text-align:center;min-height:18px}.studio-card{padding:22px}.studio-sign{font:700 9px/1 var(--mono);letter-spacing:.15em;color:var(--gold);margin-bottom:9px}
+.lock{min-height:82dvh;display:grid;place-items:center}.lock .icon{width:54px;height:54px;display:grid;place-items:center;border-radius:18px;font-family:var(--display);font-size:23px;background:var(--ink);color:#fff;margin-bottom:18px}.lock h1{font-size:34px}.lock .lead{font-size:16px}.lock-actions{display:grid;gap:9px;margin-top:18px}.error-box{font-size:13px;color:var(--danger);margin-top:10px;display:none}.error-box.show{display:block}
+.footer{text-align:center;font:700 9px/1.7 var(--mono);letter-spacing:.08em;color:#8A9296;padding:19px 8px}.restart{margin-top:8px;border:none;background:none;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:12px}
+@media(max-width:390px){.hero-proof{grid-template-columns:1fr 1fr 1fr}.hero-proof b{font-size:18px}.q-title{font-size:25px}.card{padding:19px}.hero .card,.result-hero,.offer{padding:24px 20px}.score-line{align-items:flex-start;flex-direction:column}.overall{font-size:56px}.ai-compare{grid-template-columns:1fr}.ai-arrow{transform:rotate(90deg);height:20px}.offer-meta{grid-template-columns:repeat(3,1fr)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar"><div class="brand"><span class="brandmark">TN</span><span>TORIYA NOVA · STUDIO</span></div><div id="demoBadge" class="demo">DEMO</div></div>
+
+  <section id="boot" class="screen active">
+    <div class="loader"><div><div class="scan"></div><div class="eyebrow">BUSINESS SCAN</div><h2>Собираю ваш контекст</h2><p class="muted">Проверяю доступ и готовлю диагностику.</p></div></div>
+  </section>
+
+  <section id="locked" class="screen">
+    <div class="lock"><div class="card"><div class="icon">TN</div><div class="eyebrow">ДОСТУП ТОЛЬКО ИЗ КАНАЛА</div><h1>Ваш разбор хранится здесь</h1><p class="lead">Подпишитесь на TORIYA NOVA — и приложение откроется. Если вы уже проходили диагностику, результат никуда не исчезнет.</p><div class="lock-actions"><a id="joinChannel" class="btn block" href="#">Подписаться на канал</a><button id="retryAccess" class="btn block ghost">Я подписалась — проверить</button></div><div id="accessError" class="error-box"></div></div></div>
+  </section>
+
+  <section id="intro" class="screen hero">
+    <div class="card dark">
+      <div class="hero-number">BUSINESS SCAN · 01</div>
+      <div class="eyebrow">ЭКСПРЕСС-АУДИТ ПЕРЕД РАБОТОЙ С AI</div>
+      <h1><span id="helloName"></span>Проверим, где AI <em>понимает</em> ваш бизнес — а где начинает додумывать.</h1>
+      <p class="hero-copy">12 вопросов. Без типологий и «магических архетипов». В конце вы увидите, что у вас уже собрано, где слабое место и что стоит сделать первым.</p>
+      <div class="hero-proof"><div><b>12</b><span>вопросов</span></div><div><b>5–7</b><span>минут</span></div><div><b>1</b><span>личный разбор</span></div></div>
+      <button id="startBtn" class="btn block">Начать диагностику <span class="arrow">→</span></button>
+      <p class="note" style="color:#AEBAC0;text-align:center">Результат остаётся внутри приложения. Никаких PDF.</p>
+    </div>
+    <div class="card">
+      <div class="eyebrow">ЧТО ВЫ ПОЛУЧИТЕ</div>
+      <div class="promise">
+        <div class="promise-row"><div class="promise-num">01</div><div><b>Карту ясности</b><span>клиент, конкуренты, путь, система, MVP и контекст для AI</span></div></div>
+        <div class="promise-row"><div class="promise-num">02</div><div><b>Одно главное слабое место</b><span>не 25 советов, а точку, с которой сейчас разумно начинать</span></div></div>
+        <div class="promise-row"><div class="promise-num">03</div><div><b>Следующие шаги</b><span>что собрать, прежде чем просить нейросеть делать воронку, продукт или приложение</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="quiz" class="screen">
+    <div class="progress-wrap"><div class="progress-meta"><span id="qCounter">01 / 12</span><span id="sectionName">КОНТЕКСТ</span></div><div class="progress"><i id="progressBar" style="width:8%"></i></div></div>
+    <div class="card q-card"><div id="qIndex" class="q-index">01</div><div class="eyebrow" id="qEyebrow">КОНТЕКСТ БИЗНЕСА</div><div id="qTitle" class="q-title"></div><div id="qHelp" class="q-help"></div><div id="options" class="opts"></div></div>
+    <div class="navrow"><button id="prevBtn" class="btn ghost" aria-label="Назад">←</button><button id="nextBtn" class="btn" disabled>Дальше <span class="arrow">→</span></button></div>
+  </section>
+
+  <section id="processing" class="screen"><div class="loader"><div><div class="scan"></div><div class="eyebrow">СОБИРАЮ РАЗБОР</div><h2>Связываю ваши ответы</h2><p class="muted" id="processingText">Смотрю, где системе не хватает фактов.</p></div></div></section>
+
+  <section id="result" class="screen">
+    <div class="card dark result-hero">
+      <div class="eyebrow">ВАШ BUSINESS SCAN</div>
+      <h2 id="resultTitle">AI пока приходится слишком много додумывать</h2>
+      <p class="result-sub" id="resultSub"></p>
+      <div class="score-line"><div class="micro" style="color:#AEBAC0;max-width:235px">Не «оценка вас». Это оценка того, насколько бизнес уже описан так, чтобы с ним можно было точно проектировать.</div><div class="overall"><span id="overallScore">0</span>%<small>ясность контекста</small></div></div>
+    </div>
+
+    <div class="card"><div class="eyebrow">КАРТА ЯСНОСТИ</div><div id="metrics" class="metric-grid"></div></div>
+
+    <div class="card focus-card"><div class="focus-pill">ГЛАВНАЯ ТОЧКА РОСТА</div><h2 id="weakTitle"></h2><div id="weakAlert" class="alert"></div><div class="tinyline"></div><div class="micro">ЧТО В ЭТОМ МЕСТЕ ДОДУМЫВАЕТ AI</div><p id="aiRisk" class="lead" style="font-size:16px;margin-bottom:0"></p></div>
+
+    <div class="card"><div class="eyebrow">ЧТО ДЕЛАТЬ СЕЙЧАС</div><div id="insights" class="insight-list"></div></div>
+
+    <div class="card ai-card"><div class="eyebrow">ПОЧЕМУ ОДНОГО «ХОРОШЕГО ПРОМПТА» МАЛО</div><h3>Нейросеть не знает того, чего вы ей не дали.</h3><p class="muted" style="font-size:14px">Если клиент, путь, конкуренты и границы продукта не разобраны, AI всё равно выдаст ответ. Просто часть решения он заполнит типовыми догадками.</p><div class="ai-compare"><div class="ai-side"><small>ПРОСТО ПРОМПТ</small><b>«Сделай мне воронку / приложение / продукт»</b></div><div class="ai-arrow">→</div><div class="ai-side"><small>СОБРАННЫЙ КОНТЕКСТ</small><b>Факты → связи → архитектура → точная задача → MVP</b></div></div></div>
+
+    <div class="card dark offer">
+      <div class="eyebrow">ПРАКТИЧЕСКАЯ ГРУППА · СТАРТ 5 СЕНТЯБРЯ</div>
+      <h2>Собрать свой бизнес так, чтобы AI перестал гадать.</h2>
+      <p class="offer-intro">Мы не будем отдельно «учить JTBD», «учить промпты» и «учить MVP». Возьмём ваш реальный проект и один раз пройдём весь путь руками — от исследования до первой рабочей версии.</p>
+      <div class="offer-list">
+        <div class="offer-item"><span>01</span><div>разберём конкурентов и то, с чем клиент реально сравнивает вас;</div></div>
+        <div class="offer-item"><span>02</span><div>соберём путь клиента и найдём, где теряются внимание, доверие и деньги;</div></div>
+        <div class="offer-item"><span>03</span><div>опишем систему: роли, данные, процессы, ограничения и границы MVP;</div></div>
+        <div class="offer-item"><span>04</span><div>подготовим контекст для нейросетей и соберём первую рабочую версию.</div></div>
+      </div>
+      <div class="offer-meta"><div><b>10</b><span>человек</span></div><div><b>5.09</b><span>старт</span></div><div><b>живые</b><span>разборы</span></div></div>
+      <div class="price-row"><div class="price">7 000 ₽</div><div class="price-note">Работаем на вашем проекте, а не на учебном примере.</div></div>
+      <button id="groupCta" class="btn block">Хочу разобрать свой проект <span class="arrow">→</span></button><div id="leadStatus" class="note lead-status"></div>
+    </div>
+
+    <div class="card studio-card"><div class="studio-sign">TORIYA NOVA STUDIO</div><h3>То, что вы сейчас прошли, — маленькая версия нашей работы.</h3><p class="muted" style="margin:9px 0 0;font-size:14px">Сначала мы собираем контекст и логику системы. Потом проектируем решение. И только после этого отдаём реализацию AI.</p></div>
+    <div class="footer">СНАЧАЛА ПОНЯТЬ. ПОТОМ СПРОЕКТИРОВАТЬ. ПОТОМ СОБРАТЬ.<br><button id="restartBtn" class="restart">Пройти ещё раз</button></div>
+  </section>
+</div>
+<script>
+const CONFIG={
+  channelUrl:'https://t.me/tori_ya_nova',
+  groupCtaUrl:'https://t.me/toriya_nova',
+  storageKey:'toriya_business_lab_passport_v2',
+  recheckMs:120000
+};
+
+const metricsMeta={
+  context:{name:'Цель и контекст',short:'КОНТЕКСТ',low:'Сейчас решение появляется раньше, чем точно сформулирована задача. Поэтому AI может уверенно собирать не то, что реально нужно бизнесу.',next:'Сформулировать: что есть сейчас, что должно стать по-другому и какие ограничения нельзя нарушать.'},
+  client:{name:'Клиент',short:'КЛИЕНТ',low:'Клиент пока описан слишком широко. AI не видит конкретную ситуацию, в которой человек начинает искать решение, и вынужден достраивать её сам.',next:'Взять 3–5 реальных клиентов и описать: что происходило до покупки, чего они хотели и что пробовали вместо вас.'},
+  competition:{name:'Конкуренты и альтернативы',short:'КОНКУРЕНТЫ',low:'Вы можете видеть прямых конкурентов, но не весь выбор клиента. А он сравнивает вас ещё с «сделаю сам», «отложу», таблицей, другим форматом или вообще бездействием.',next:'Разобрать 5–7 вариантов, между которыми реально выбирает клиент: обещание, путь, цена, доказательства и слабые места.'},
+  journey:{name:'Путь клиента',short:'ПУТЬ',low:'Путь клиента существует, но не собран как система. Поэтому сложно понять, где именно теряется человек и что на самом деле нужно автоматизировать.',next:'Разложить путь от первого касания до результата и отметить переходы, вопросы клиента и места, где он чаще всего исчезает.'},
+  architecture:{name:'Система и MVP',short:'СИСТЕМА',low:'Большая часть логики пока живёт в голове. Без границ AI легко добавляет лишнее, смешивает этапы и превращает первую версию в комбайн.',next:'Определить один главный сценарий первой версии: кто входит, что делает, какой результат получает и что пока сознательно не строим.'},
+  ai:{name:'Контекст для AI',short:'AI-КОНТЕКСТ',low:'Нейросеть получает задачу, но не получает достаточно проверенных фактов и критериев. Поэтому хороший текст ответа может маскировать обычные догадки.',next:'Передавать AI пакет: факты, исследования, примеры, ограничения, критерии качества и понятный формат результата.'}
+};
+
+const questions=[
+ {m:'context',ey:'01 · ЦЕЛЬ И КОНТЕКСТ',s:'КОНТЕКСТ',q:'Понятно ли, какой конкретный результат человек покупает у вас?',h:'Не «помогаю развиваться», а изменение, которое можно заметить или проверить.',a:[['Пока формулирую общими словами',0],['Результат понятен, но проверить его трудно',1],['Есть конкретное изменение для клиента',2],['Есть изменение и понятный критерий результата',3]]},
+ {m:'context',ey:'02 · ЦЕЛЬ И КОНТЕКСТ',s:'КОНТЕКСТ',q:'Если убрать идею «нужен сайт / бот / курс», вы можете назвать саму проблему?',h:'Сначала разрыв. Потом решение. Не наоборот.',a:[['Обычно сразу думаю, что именно надо сделать',0],['Проблему чувствую, но описать точно сложно',1],['Могу показать, где именно возникает разрыв',2],['Могу показать разрыв, последствия и ограничения',3]]},
+ {m:'client',ey:'03 · КЛИЕНТ',s:'КЛИЕНТ',q:'Вы понимаете, в какой ситуации человек становится вашим клиентом?',h:'Не возраст и интересы, а момент: что у него происходит и почему он начинает искать решение.',a:[['Скорее знаю общую аудиторию',0],['Есть портрет клиента и его запросы',1],['Знаю конкретную ситуацию и проблему',2],['Знаю ситуацию, поведение и реальные истории клиентов',3]]},
+ {m:'client',ey:'04 · КЛИЕНТ',s:'КЛИЕНТ',q:'Знаете, что человек делает вместо покупки у вас?',h:'Иногда ваш главный конкурент — не другой эксперт, а «потерплю», таблица, сотрудник или «сделаю потом».',a:[['Нет, обычно смотрю только прямых конкурентов',0],['Могу предположить несколько вариантов',1],['Знаю реальные альтернативы клиента',2],['Знаю, что он пробовал раньше и почему решил сменить способ',3]]},
+ {m:'competition',ey:'05 · КОНКУРЕНТЫ',s:'КОНКУРЕНТЫ',q:'Как вы смотрите конкурентов перед запуском?',h:'Важно понять не оформление, а механику: кому продают, что обещают и как ведут к покупке.',a:[['Смотрю пару аккаунтов или почти не анализирую',0],['Сравниваю цены, контент и оформление',1],['Сравниваю продукты, обещания, воронки и доказательства',2],['Разбираю прямые и непрямые альтернативы и ищу незакрытые сценарии',3]]},
+ {m:'competition',ey:'06 · КОНКУРЕНТЫ',s:'КОНКУРЕНТЫ',q:'Можете в одном предложении сказать, почему клиенту стоит выбрать именно вас?',h:'Без «индивидуального подхода», «качества» и «с душой».',a:[['Пока в основном через личность и общие плюсы',0],['Есть отличия, но их легко повторить',1],['Есть ясная причина выбора в конкретной ситуации',2],['Есть причина выбора, доказательство и понятная альтернатива, против которой мы выигрываем',3]]},
+ {m:'journey',ey:'07 · ПУТЬ КЛИЕНТА',s:'ПУТЬ',q:'Вы видите путь человека от первого касания до результата?',h:'Не в голове — как последовательность шагов, где можно заметить потери.',a:[['Нет, всё идёт довольно стихийно',0],['Примерно понимаю основные этапы',1],['Путь выписан от первого касания до результата',2],['На ключевых переходах есть вопросы клиента, цифры и точки потери',3]]},
+ {m:'journey',ey:'08 · ПУТЬ КЛИЕНТА',s:'ПУТЬ',q:'Если продаж стало меньше, сможете найти, где именно всё просело?',h:'«Мало продаж» — это симптом. Нам нужно место разрыва.',a:[['Скорее начну делать больше контента или рекламы',0],['Буду искать по ощущениям и перепискам',1],['Есть показатели, по которым найду вероятное место',2],['Могу увидеть конкретный переход и причину потери',3]]},
+ {m:'architecture',ey:'09 · СИСТЕМА',s:'СИСТЕМА',q:'Что случится, если вы выпадете из работы на неделю?',h:'Этот вопрос быстро показывает, где бизнес пока держится на памяти и ручном управлении.',a:[['Многое встанет',0],['Люди разберутся, но будут постоянно спрашивать',1],['Основные процессы описаны, но есть серые зоны',2],['Понятны роли, действия, данные и где всё это хранится',3]]},
+ {m:'architecture',ey:'10 · MVP',s:'MVP',q:'Вы знаете, что точно НЕ войдёт в первую версию продукта?',h:'Хороший MVP проверяет ценность, а не пытается сразу стать «полной системой».',a:[['Пока хочется включить всё полезное',0],['Есть список функций — потом урежем по бюджету',1],['Есть один главный сценарий, остальное можно убрать',2],['Есть гипотеза, критерий проверки и чёткая граница «не сейчас»',3]]},
+ {m:'ai',ey:'11 · КОНТЕКСТ ДЛЯ AI',s:'AI',q:'Что вы даёте нейросети до того, как просите стратегию, воронку или продукт?',h:'Длинный промпт и собранный контекст — не одно и то же.',a:[['Обычно просто объясняю задачу сообщением',0],['Пишу подробный промпт и уточняю по ходу',1],['Подгружаю документы, примеры и данные о продукте',2],['Даю структурированный пакет фактов, исследований, ограничений и критериев',3]]},
+ {m:'ai',ey:'12 · ПРОВЕРКА AI',s:'AI',q:'Как вы проверяете, что ответ AI действительно подходит бизнесу?',h:'«Мне нравится» проверяет вкус. Нам нужны условия задачи.',a:[['Выглядит умно и похоже на нужное',0],['Читаю и правлю по ощущению',1],['Проверяю по задаче и сценарию клиента',2],['Есть заранее заданные факты, ограничения и критерии — по ним и проверяю',3]]}
+];
+
+let state={i:0,answers:Array(questions.length).fill(null),access:false,lastCheck:0,userId:'anon',userFirstName:'',leadSending:false};
+function storageKey(){return CONFIG.storageKey+'_'+String(state.userId||'anon')}
+const $=id=>document.getElementById(id);
+const screens=['boot','locked','intro','quiz','processing','result'];
+function show(id){screens.forEach(x=>$(x).classList.toggle('active',x===id));window.scrollTo({top:0,behavior:'instant'});}
+function isLocalDemo(){return location.protocol==='file:'||['localhost','127.0.0.1'].includes(location.hostname)}
+function openTg(url){if(window.Telegram?.WebApp?.openTelegramLink && url.startsWith('https://t.me/')) Telegram.WebApp.openTelegramLink(url); else location.href=url;}
+
+async function apiPost(url,payload){const tg=window.Telegram?.WebApp;const initData=tg?.initData||'';const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...payload,initData})});let data={};try{data=await r.json()}catch{}if(!r.ok)throw new Error(data.error||('http_'+r.status));return data;}
+async function track(event,meta={}){if(isLocalDemo())return;try{await apiPost('/api/event',{event,meta})}catch{}}
+
+async function checkAccess(force=false){
+  if(isLocalDemo()){state.access=true;state.userId='demo';$('demoBadge').classList.add('show');enterApp();return true;}
+  const tg=window.Telegram?.WebApp; const initData=tg?.initData||'';
+  if(!initData){state.access=false;show('locked');$('accessError').textContent='Откройте лабораторию из Telegram Mini App — так я смогу проверить подписку.';$('accessError').classList.add('show');return false;}
+  if(!force && Date.now()-state.lastCheck<CONFIG.recheckMs && state.access) return true;
+  try{
+    const r=await fetch('/api/access',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({initData})});
+    const data=await r.json(); state.lastCheck=Date.now(); state.access=!!data.allowed; state.userId=data.user?.id||'anon'; state.userFirstName=data.user?.first_name||'';
+    if(!state.access){
+      show('locked');
+      const messages={
+        not_member:'Telegram пока не видит подписку на канал. Если вы подписаны — нажмите ещё раз через пару секунд.',
+        bot_token_missing:'На сервере не задан BOT_TOKEN.',
+        bot_token_invalid:'BOT_TOKEN не подходит этому боту.',
+        channel_id_missing:'На сервере не задан CHANNEL_ID.',
+        channel_not_found:'Telegram не нашёл канал. Проверьте CHANNEL_ID.',
+        bot_not_admin:'Бот должен быть администратором канала, чтобы надёжно проверять подписку.',
+        hash_mismatch:'Не совпадает Telegram-авторизация. Проверьте, что BOT_TOKEN взят именно от этого бота.',
+        init_data_expired:'Сессия Telegram устарела. Закройте Mini App и откройте заново.',
+        init_data_missing:'Откройте приложение именно из Telegram.',
+        telegram_user_not_found:'Telegram не смог найти пользователя для проверки.',
+        telegram_api_error:'Telegram API вернул ошибку при проверке подписки.'
+      };
+      $('accessError').textContent=messages[data.error]||('Не удалось подтвердить доступ'+(data.error?' · '+data.error:''));
+      $('accessError').classList.add('show');
+    } else {
+      $('accessError').classList.remove('show');
+      enterApp();
+    }
+    return state.access;
+  }catch(e){state.access=false;show('locked');$('accessError').textContent='Не удалось проверить доступ. Нажмите «Проверить подписку» ещё раз.';$('accessError').classList.add('show');return false;}
+}
+function enterApp(){track('app_open');const hello=$('helloName');if(hello)hello.textContent=state.userFirstName?state.userFirstName+',\n':'';const saved=loadSaved();if(saved?.answers?.length===questions.length&&saved.answers.every(Boolean)){state.answers=saved.answers;show('result');renderResult();}else show('intro');}
+function loadSaved(){try{return JSON.parse(localStorage.getItem(storageKey())||'null')}catch{return null}}
+function saveResult(){localStorage.setItem(storageKey(),JSON.stringify({answers:state.answers,updatedAt:new Date().toISOString()}));}
+
+function renderQuestion(){const q=questions[state.i];const qi=String(state.i+1).padStart(2,'0');$('qCounter').textContent=qi+' / '+questions.length;$('qIndex').textContent=qi;$('sectionName').textContent=q.s;$('qEyebrow').textContent=q.ey;$('qTitle').textContent=q.q;$('qHelp').textContent=q.h;$('progressBar').style.width=((state.i+1)/questions.length*100)+'%';
+  $('options').innerHTML='';q.a.forEach(([label,score],idx)=>{const b=document.createElement('button');b.className='opt'+(state.answers[state.i]?.idx===idx?' sel':'');b.textContent=label;b.onclick=()=>{state.answers[state.i]={idx,score};try{Telegram.WebApp.HapticFeedback.selectionChanged()}catch{};if([3,7,11].includes(state.i))track('diagnostic_progress',{question:state.i+1});renderQuestion();};$('options').appendChild(b)});$('nextBtn').disabled=!state.answers[state.i];$('nextBtn').innerHTML=state.i===questions.length-1?'Собрать мой разбор <span class="arrow">→</span>':'Дальше <span class="arrow">→</span>';$('prevBtn').disabled=state.i===0;}
+function calculate(){const sums={context:0,client:0,competition:0,journey:0,architecture:0,ai:0},counts={context:0,client:0,competition:0,journey:0,architecture:0,ai:0};questions.forEach((q,i)=>{sums[q.m]+=state.answers[i]?.score||0;counts[q.m]+=3});const pct={};Object.keys(sums).forEach(k=>pct[k]=Math.round(sums[k]/counts[k]*100));const overall=Math.round(Object.values(pct).reduce((a,b)=>a+b,0)/Object.keys(pct).length);const sorted=Object.entries(pct).sort((a,b)=>a[1]-b[1]);return{pct,overall,sorted};}
+function resultHeading(overall){if(overall<35)return['AI пока приходится слишком много додумывать','Проблема не в промптах: части бизнеса ещё не собраны в понятный контекст.'];if(overall<60)return['Вы понимаете бизнес лучше, чем он сейчас описан','Основа есть, но важные связи пока живут в голове. На них AI и начинает гадать.'];if(overall<80)return['Основа сильная. Осталось связать части','После этого AI сможет быть не советчиком «из интернета», а нормальным исполнителем вашей логики.'];return['Контекст собран хорошо','AI уже можно использовать как сильного исполнителя: задача, границы и критерии у вас в основном определены.'];}
+function riskText(keys){const phrases={context:'какую проблему вы на самом деле решаете и где границы задачи',client:'почему клиент приходит именно сейчас и что для него действительно важно',competition:'с чем клиент сравнивает вас и почему выбирает другой путь',journey:'где именно человек теряется между интересом, покупкой и результатом',architecture:'что должно быть в первой версии, кто за что отвечает и что пока не нужно строить',ai:'какие факты считать правдой и по каким критериям проверять результат'};return 'В этом месте нейросеть начнёт сама придумывать '+keys.map(k=>phrases[k]).join(' и ')+'.';}
+function metricClass(v){return v<45?'low':v<72?'mid':'high'}
+function renderResult(){const {pct,overall,sorted}=calculate();const [title,sub]=resultHeading(overall);$('resultTitle').textContent=title;$('resultSub').textContent=sub;$('overallScore').textContent=overall;
+ $('metrics').innerHTML='';Object.entries(pct).forEach(([k,v])=>{$('metrics').insertAdjacentHTML('beforeend',`<div class="metric"><div class="metric-head"><b>${metricsMeta[k].name}</b><span>${v}%</span></div><div class="mbar ${metricClass(v)}"><i style="width:${v}%"></i></div></div>`)});
+ const [weakKey,weakScore]=sorted[0];const secondKey=sorted[1][0];$('weakTitle').textContent=metricsMeta[weakKey].name+' · '+weakScore+'%';$('weakAlert').className='alert '+(weakScore>=72?'good':'');$('weakAlert').innerHTML=`<b>Что вижу.</b> ${metricsMeta[weakKey].low}`;$('aiRisk').textContent=riskText([weakKey,secondKey]);
+ $('insights').innerHTML='';sorted.slice(0,3).forEach(([k,v],idx)=>{$('insights').insertAdjacentHTML('beforeend',`<div class="insight"><div class="num">0${idx+1} · ${v}%</div><b>${metricsMeta[k].name}</b><p>${metricsMeta[k].next}</p></div>`)});saveResult();track('result_view',{overall,weak:weakKey,weakScore});}
+
+function leadDraft(overall,weak,weakScore){
+  const name=metricsMeta[weak]?.name||'не определено';
+  return `Привет, Тория! Я прошла BUSINESS SCAN.\n\nОбщая ясность: ${overall}%\nГлавная точка роста: ${name} — ${weakScore}%\n\nХочу узнать про практическую группу 5 сентября.`;
+}
+function openLeadChat(message){
+  const sep=CONFIG.groupCtaUrl.includes('?')?'&':'?';
+  openTg(CONFIG.groupCtaUrl+sep+'text='+encodeURIComponent(message));
+}
+
+$('joinChannel').href=CONFIG.channelUrl;
+$('joinChannel').onclick=e=>{e.preventDefault();openTg(CONFIG.channelUrl)};
+$('groupCta').onclick=async()=>{
+  if(state.leadSending)return;
+  state.leadSending=true;
+  const b=$('groupCta'),status=$('leadStatus');
+  b.disabled=true;b.textContent='Отправляю ваш разбор…';status.textContent='';
+  const {pct,overall,sorted}=calculate();const [weak,weakScore]=sorted[0];
+  track('cta_click',{overall,weak,weakScore});
+  const draft=leadDraft(overall,weak,weakScore);
+  if(isLocalDemo()){setTimeout(()=>{b.textContent='Готово ✓';status.textContent='В Telegram Тория получит ваш контакт и результаты диагностики.';state.leadSending=false},450);return;}
+  try{
+    await apiPost('/api/lead',{diagnostic:{overall,weak,weakScore,pct}});
+    b.textContent='Заявка отправлена ✓';
+    status.textContent='Готово. Я уже отправила Тории ваш контакт и результаты.';
+    try{Telegram.WebApp.HapticFeedback.notificationOccurred('success')}catch{}
+    track('lead_sent',{overall,weak,weakScore});
+  }catch(e){
+    b.disabled=false;b.textContent='Написать Тории →';
+    status.textContent='Автоотправка не прошла. Открою личку — текст заявки уже будет заполнен.';
+    state.leadSending=false;
+    setTimeout(()=>openLeadChat(draft),450);
+  }
+};
+$('retryAccess').onclick=()=>{show('boot');checkAccess(true)};
+$('startBtn').onclick=()=>{state.i=0;state.answers=Array(questions.length).fill(null);track('diagnostic_started');renderQuestion();show('quiz')};
+$('prevBtn').onclick=()=>{if(state.i>0){state.i--;renderQuestion();window.scrollTo({top:0,behavior:'smooth'})}};
+$('nextBtn').onclick=()=>{if(!state.answers[state.i])return;if(state.i<questions.length-1){state.i++;renderQuestion();window.scrollTo({top:0,behavior:'smooth'});}else{show('processing');const msgs=['Сверяю цель, клиента и путь.','Смотрю конкурентов и альтернативы.','Ищу место, где AI начинает додумывать за вас.'];let m=0;const t=setInterval(()=>{$('processingText').textContent=msgs[++m%msgs.length]},650);setTimeout(()=>{clearInterval(t);renderResult();show('result')},1850)}};
+$('restartBtn').onclick=()=>{localStorage.removeItem(storageKey());state.answers=Array(questions.length).fill(null);show('intro')};
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&!isLocalDemo()&&state.access&&Date.now()-state.lastCheck>CONFIG.recheckMs)checkAccess(true)});
+window.addEventListener('load',()=>{if(window.Telegram?.WebApp){Telegram.WebApp.ready();Telegram.WebApp.expand();try{Telegram.WebApp.setHeaderColor('#F4F0E8');Telegram.WebApp.setBackgroundColor('#F4F0E8')}catch{};try{Telegram.WebApp.onEvent('activated',()=>{if(state.access&&Date.now()-state.lastCheck>CONFIG.recheckMs)checkAccess(true)})}catch{}}checkAccess(true)});
+</script>
+</body>
+</html>
