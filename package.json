@@ -1,0 +1,13 @@
+{
+  "name": "toriya-nova-business-lab",
+  "version": "2.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "mkdir -p public && cp index.html public/index.html",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}
