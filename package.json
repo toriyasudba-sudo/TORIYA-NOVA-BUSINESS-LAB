@@ -1,0 +1,8 @@
+{
+  "name":"toriya-nova-business-lab",
+  "version":"1.0.0",
+  "private":true,
+  "description":"Telegram Mini App: architectural business diagnostics for TORIYA NOVA STUDIO",
+  "scripts":{"start":"node server.js"},
+  "engines":{"node":">=20"}
+}
